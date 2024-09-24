@@ -1,26 +1,25 @@
 on:
   watch:
+    # When someone stars a repository
     types: [started]
+
 name: Invite a new user
 jobs:
-    build:
-      runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest # has Python 3 installed
 
-      steps:
-        - name: checkout repo content
-          uses: actions/checkout@v2
-        - name: setup python
-          uses: actions/setup-python@v2
-          with:
-            python-version: 3.8
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install requests
-            if [ -f ./.github/workflows/requirements.txt ]; then pip install -r requirements.txt; fi
-        - name: execute py script
-          run: |
-            python ./.github/workflows/AutoInviteToOrgByStar.py
-          env:
-            MY_GITHUB_KEY: ${{ secrets.MY_GITHUB_KEY }}
-            COMMUNITY_TEAM_ID: ${{ secrets.COMMUNITY_TEAM_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install requirements
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests # Actually already installed
+          if [ -f ./.github/workflows/requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Execute script
+        run: |
+          python ./.github/workflows/AutoInviteToOrgByStar.py
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ORG_NAME: ${{ secrets.ORG_NAME }}
+          TEAM_NAME: ${{ secrets.TEAM_NAME }}
